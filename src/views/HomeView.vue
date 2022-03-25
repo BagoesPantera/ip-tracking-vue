@@ -1,32 +1,49 @@
 <script setup>
 import { ref } from "vue";
+import L from "leaflet";
 
 let searchInput = ref("");
 let datas = ref("");
 let loading = ref(false);
-let longitude = ref("");
-let latitude = ref("");
 
 async function getData() {
   loading.value = true
-  const respone =  await fetch(`http://ipwhois.app/json/${searchInput.value}`, {
+  const respone =  await fetch(`http://ip-api.com/json/${searchInput.value}`, {
     method: "GET",
   })
   const data = await respone.json();
-  // console.log(data.longitude);
-  longitude.value = data.longitude;
-  latitude.value = data.latitude;
   datas.value = data;
   loading.value = false;
+
+  // MAP
+  mapFunc(data.lat, data.lon);
 }
 getData();
+
+function mapFunc(lat,lon){
+  var map = L.map('map').setView([lat,lon], 12);
+  // https://leafletjs.com/SlavaUkraini/reference.html#tilelayer
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    tileSize: 512,
+    zoomOffset: -1,
+  }).addTo(map);
+  var marker = L.marker([lat,lon]).addTo(map);
+  var circle = L.circle([lat,lon], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.2,
+    radius: 5000
+  }).addTo(map);
+}
 
 function btnGetdata(value){
   searchInput.value = value;
   getData();
 }
-// number or string mybe
-const apiitems = ["ip", "country_phone", "latitude", "longitude", "timezone_dstOffset", "timezone_gmtOffset", "currency_rates", "completed_requests"];
+
+// Checking data from json
+const apiitems = ["lat", "lon", "zip", "query", ];
 function outputCheck(item) {
   for (let index = 0; index < apiitems.length; index++) {
     if (item === apiitems[index]) {
@@ -36,13 +53,12 @@ function outputCheck(item) {
 }
 
 </script>
-
 <template>
-  <div class="flex justify-center items-center h-screen w-screen bg-gradient-to-r from-cyan-500 to-blue-500"> <!-- parent div -->
-    <div class="w-3/4 h-3/4 flex bg-gray-200 rounded shadow-lg"> <!-- centered div -->
-         <!-- LEFT DIV -->
-        <div class="grid  w-2/4">
-            <!-- Search input https://tailwindcomponents.com/component/search-bar -->
+    <div class="flex justify-center items-center h-screen w-screen bg-gradient-to-r from-cyan-500 to-blue-500"> <!-- parent div -->
+        <div class="w-3/4 h-3/4 flex bg-gray-200 rounded shadow-lg"> <!-- centered div -->
+            <!-- LEFT DIV -->
+            <div class="grid  w-2/4">
+                <!-- Search input https://tailwindcomponents.com/component/search-bar -->
                 <div class="pt-2 relative mx-auto mt-5 text-gray-600 w-3/4 h-3/5">
                   <input class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 w-full rounded-lg text-sm focus:outline-none"
                   type="search" name="search" placeholder="Search any IP here" v-model="searchInput" >
@@ -56,10 +72,7 @@ function outputCheck(item) {
                     </svg>
                   </button>
                   <!-- OUTPUT -->
-                  <div class="bg-neutral-700 w-full sm:h-1/5 md:h-2/5 lg:h-3/5 xl:h-4/5 mt-5 rounded mx-auto my-auto overflow-auto" v-bind:class="{'animate-pulse' : loading, 'a' : !loading}">
-                    <!-- <div class="w-full h-full bg-white" >
-                      <img src="https://cutewallpaper.org/21/loading-gif-transparent-background/Update-throbber-icon-in-Seven-theme-2775725-Drupalorg.gif" width="400" alt="loading image">
-                    </div> -->
+                  <div class="bg-neutral-700 w-full sm:h-1/5 md:h-2/5 lg:h-3/5 xl:h-full mt-5 rounded mx-auto my-auto overflow-auto" v-bind:class="{'animate-pulse' : loading, 'a' : !loading}">
                     <div class="" v-if="loading === true">
                     <ul>
                       <li v-for="index in 15">
@@ -70,16 +83,19 @@ function outputCheck(item) {
                     <div class="" v-else>
                       <ul class="ml-2">
                         <li v-for="(data, index) in datas">
-                          <span v-if="index === 'country_flag'">
+                        <!-- If api return empty string -->
+                          <span v-if="data === ''">
                             <div class="flex">
-                              <p class="text-neutral-300">{{index}}: </p> <img class="rounded ml-2" :src="data" alt="country flag" width="30" height="10">
+                                <p class="text-neutral-300">{{index}}: </p><p class="text-orange-400">&nbsp -</p>    
                             </div>
                           </span>
+                          <!-- Number -->
                           <span v-else-if="outputCheck(index)">
                             <div class="flex">
                               <p class="text-neutral-300">{{index}}: </p><p class="text-green-400">&nbsp {{data}}</p>
                             </div>
                           </span>
+                          <!-- Else -->
                           <span v-else>
                             <div class="flex">
                               <p class="text-neutral-300">{{index}}: </p><p class="text-orange-400">&nbsp {{data}}</p>
@@ -99,20 +115,14 @@ function outputCheck(item) {
 
         <!-- RIGHT DIV -->
         <div class="w-2/4 flex justify-center items-center">
-            <div class="w-full h-full">
-                <iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" :src="`https://www.openstreetmap.org/export/embed.html?bbox=${longitude}%2C${latitude}%2C${longitude}%2C${latitude}&amp;layer=mapnik&amp;marker=${latitude}%2C${longitude}`" style="border: 1px solid black; width: 100%; height: 100%;"></iframe>
-                <!-- hmmmmmm zoom : https://help.openstreetmap.org/questions/20335/embedded-html-displays-zoomed-out -->
-            </div>
+            <div id="map" class="w-full h-full"></div>
         </div>
     </div>
         <div class="absolute inset-x-0 top-0 h-16 flex justify-center items-center">
            <span class="inline-block align-middle text-4xl text-gray-100 font-bold">IP Tracking</span>
         </div>
        <div class="absolute bottom-0 right-0 h-16 w-100 mr-5 text-gray-100">
-         <span>
-           Powered by <a class="text-blue-200" href="https://ipwhois.io/" target="_blank">ipwhhois.io</a>
-         </span>
+           <span>Powered by <a class="text-blue-200" href="https://ip-api.com/" target="_blank">IP-API.com</a></span>
         </div>
     </div>
-   
 </template>

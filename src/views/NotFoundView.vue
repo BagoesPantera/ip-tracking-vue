@@ -1,7 +1,10 @@
-<script setup>
-
+<script>
+export default {
+    created(){
+        document.title = "IP Tracking - 404"
+    }
+  }
 </script>
-
 <template>
     <div class="flex items-center justify-center w-screen h-screen bg-gradient-to-r from-cyan-500 to-blue-500">
         <div class="px-40 py-20 bg-white rounded-md shadow-xl">
