@@ -6,7 +6,13 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('../views/HomeView.vue')
+      component: function () {
+        if(screen.width <= 760){
+          return import('../views/HomeViewMobile.vue')
+        }else{
+          return  import('../views/HomeView.vue')
+        }
+      }  
     },
     {
       path: '/:pathMatch(.*)*',
