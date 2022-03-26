@@ -1,5 +1,5 @@
 # IP Tracking - VUE
-This is a IP Tracking project that developed in Vue 3 and Vite. Powered by [IP-API.com](https://ip-api.com/), [Leaflet](https://leafletjs.com/) and [OpenStreetMap](https://www.openstreetmap.org/)
+This is an IP Tracking project that developed in Vue 3 and Vite. Powered by [IP-API.com](https://ip-api.com/), [Leaflet](https://leafletjs.com/) and [OpenStreetMap](https://www.openstreetmap.org/).
 
 ## Screenshots
 HomeView
