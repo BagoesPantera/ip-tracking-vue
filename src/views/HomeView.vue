@@ -8,7 +8,7 @@ let loading = ref(false);
 
 async function getData() {
   loading.value = true
-  const respone =  await fetch(`http://ip-api.com/json/${searchInput.value}`, {
+  const respone =  await fetch(`https://ip-api.com/json/${searchInput.value}`, {
     method: "GET",
   })
   const data = await respone.json();
