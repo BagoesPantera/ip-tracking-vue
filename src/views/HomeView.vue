@@ -8,7 +8,7 @@ let loading = ref(false);
 
 async function getData() {
   loading.value = true
-  const respone =  await fetch(`http://ip-api.com/json/${searchInput.value}`, {
+  const respone =  await fetch(`https://ipapi.co/${searchInput.value}/json`, {
     method: "GET",
   })
   const data = await respone.json();
@@ -20,7 +20,7 @@ async function getData() {
   if(container != null){
     container._leaflet_id = null;
   }
-  mapFunc(data.lat, data.lon, data.query);
+  mapFunc(data.latitude, data.longitude, data.ip);
 }
 getData();
 
@@ -48,7 +48,7 @@ function btnGetdata(value){
 }
 
 // Checking data from json
-const apiitems = ["lat", "lon", "zip", "query"];
+const apiitems = ["ip", "postal", "latitude", "longitude", "utc_offset", "country_calling_code", "country_area", "country_population"];
 function outputCheck(item) {
   for (let index = 0; index < apiitems.length; index++) {
     if (item === apiitems[index]) {
@@ -68,7 +68,7 @@ function outputCheck(item) {
           <!-- Search input https://tailwindcomponents.com/component/search-bar -->
           <div class="pt-2 relative mx-auto mt-5 text-gray-600 w-3/4 h-3/5">
             <input class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 w-full rounded-lg text-sm focus:outline-none"
-            type="search" name="search" placeholder="Search any IP here" v-model="searchInput" >
+            type="search" name="search" placeholder="Search any IP here" v-model="searchInput" @keyup.enter="getData()">
             <button type="submit" class="absolute right-0 top-0 mt-5 mr-4" v-on:click="getData()" >
               <svg class="text-gray-600 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px"
@@ -79,7 +79,7 @@ function outputCheck(item) {
               </svg>
             </button>
             <!-- OUTPUT -->
-            <div class="bg-neutral-700 w-full sm:h-1/5 md:h-2/5 lg:h-3/5 xl:h-full mt-5 rounded mx-auto my-auto overflow-auto" v-bind:class="{'animate-pulse' : loading, 'a' : !loading}">
+            <div class="bg-neutral-700 w-full h-1/5 sm:h-1/5 md:h-2/5 lg:h-3/5 xl:h-4/5 mt-5 rounded mx-auto my-auto overflow-auto" v-bind:class="{'animate-pulse' : loading, 'a' : !loading}">
               <div class="" v-if="loading === true">
               <ul>
                 <li v-for="index in 15">
@@ -129,7 +129,7 @@ function outputCheck(item) {
         <span class="inline-block align-middle text-4xl text-gray-100 font-bold">IP Tracking</span>
     </div>
     <div class="absolute bottom-0 right-0 h-16 w-100 mr-5 text-gray-100">
-        <span>Powered by <a class="text-blue-200" href="https://ip-api.com/" target="_blank">IP-API.com</a></span>
+        <span>Powered by <a class="text-blue-200" href="https://ipapi.co/" target="_blank">ipapi.co</a></span>
     </div>
   </div>
 </template>
