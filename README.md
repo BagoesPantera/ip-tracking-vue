@@ -28,6 +28,9 @@ npm run dev
 npm run build
 ```
 
+## Github Page
+https://bagoespantera.github.io/ip-tracking-vue/
+
 ## Screenshots
 HomeView
 ![HomeView Screenshot](https://github.com/BagoesPantera/ip-tracking-vue/blob/main/screenshots/HomeView.png?raw=true)
