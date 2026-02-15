@@ -5,6 +5,7 @@ import L from "leaflet";
 let searchInput = ref("");
 let datas = ref("");
 let loading = ref(false);
+let showRateLimit = ref(false);
 
 async function getData() {
   loading.value = true;
@@ -14,6 +15,12 @@ async function getData() {
     const respone = await fetch(`https://ipapi.co${path}`, {
       method: "GET",
     });
+    if (respone.status === 429) {
+      showRateLimit.value = true;
+      datas.value = {};
+      loading.value = false;
+      return;
+    }
     data = await respone.json();
     datas.value = data;
   } catch (e) {
@@ -92,7 +99,7 @@ function outputCheck(item) {
               class="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 pr-12 text-sm placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               type="search"
               name="search"
-              placeholder="Cari IP address"
+              placeholder="Search IP address"
               v-model="searchInput"
               @keyup.enter="getData()"
             />
@@ -169,5 +176,26 @@ function outputCheck(item) {
         </div>
       </section>
     </main>
+    <div
+      v-if="showRateLimit"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-6"
+    >
+      <div
+        class="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-6 shadow-lg"
+      >
+        <div class="text-lg font-semibold">Sorry</div>
+        <p class="mt-2 text-sm text-slate-600">
+          Too many requests. Try again later.
+        </p>
+        <div class="mt-4 flex justify-end">
+          <button
+            class="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-800 hover:bg-slate-50"
+            @click="showRateLimit = false"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
