@@ -6,18 +6,12 @@ export default {
   }
 </script>
 <template>
-    <div class="flex items-center justify-center w-screen h-screen bg-gradient-to-r from-cyan-500 to-blue-500">
-        <div class="px-40 py-20 bg-white rounded-md shadow-xl">
-            <div class="flex flex-col items-center">
-                <h1 class="font-bold text-blue-600 text-9xl">404</h1>
-                <h6 class="mb-2 text-2xl font-bold text-center text-gray-800 md:text-3xl">
-                    <span class="text-red-500">Oops!</span> Page not found
-                </h6>
-                <p class="mb-8 text-center text-gray-500 md:text-lg">
-                    The page you're looking for doesn't exist.
-                </p>
-                <a href="/" class="px-6 py-2 text-sm font-semibold text-blue-800 bg-blue-100" >Go home</a>
-            </div>
-        </div>
+  <div class="min-h-screen w-full bg-slate-50 text-slate-900 flex items-center justify-center px-6">
+    <div class="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+      <div class="text-5xl font-bold text-blue-600">404</div>
+      <div class="mt-3 text-xl font-semibold">Halaman tidak ditemukan</div>
+      <p class="mt-2 text-sm text-slate-600">Maaf, halaman yang kamu cari tidak tersedia.</p>
+      <a href="/" class="mt-6 inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-800 hover:bg-slate-50">Kembali ke beranda</a>
     </div>
+  </div>
 </template>

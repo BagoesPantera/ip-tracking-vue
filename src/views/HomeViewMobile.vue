@@ -7,119 +7,167 @@ let datas = ref("");
 let loading = ref(false);
 
 async function getData() {
-  loading.value = true
-  const respone =  await fetch(`https://ipapi.co/${searchInput.value}/json`, {
-    method: "GET",
-  })
-  const data = await respone.json();
-  datas.value = data;
+  loading.value = true;
+  const path = searchInput.value ? `/${searchInput.value}/json` : `/json`;
+  let data = {};
+  try {
+    const respone = await fetch(`https://ipapi.co${path}`, {
+      method: "GET",
+    });
+    data = await respone.json();
+    datas.value = data;
+  } catch (e) {
+    datas.value = {};
+  }
   loading.value = false;
   // MAP
   // https://github.com/Leaflet/Leaflet/issues/3962#issuecomment-384510881
-  var container = L.DomUtil.get('map');
-  if(container != null){
+  var container = L.DomUtil.get("map");
+  if (container != null) {
     container._leaflet_id = null;
   }
-  mapFunc(data.latitude, data.longitude, data.ip);
+  if (data && data.latitude && data.longitude) {
+    mapFunc(data.latitude, data.longitude, data.ip);
+  }
 }
 getData();
 
-function mapFunc(lat,lon,ip){
-  var map = L.map('map').setView([lat,lon], 12);
+function mapFunc(lat, lon, ip) {
+  var map = L.map("map").setView([lat, lon], 12);
   // https://leafletjs.com/SlavaUkraini/reference.html#tilelayer
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution:
+      'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     tileSize: 512,
     zoomOffset: -1,
   }).addTo(map);
-  var marker = L.marker([lat,lon]).addTo(map);
-  var circle = L.circle([lat,lon], {
-    color: 'red',
-    fillColor: '#f03',
+  var marker = L.marker([lat, lon]).addTo(map);
+  var circle = L.circle([lat, lon], {
+    color: "red",
+    fillColor: "#f03",
     fillOpacity: 0.2,
-    radius: 5000
+    radius: 5000,
   }).addTo(map);
-  marker.bindTooltip(`<center><b>IP Tracking</b></center><hr style="border-top: 3px solid #bbb;">Your IP : ${ip}`);
+  marker.bindTooltip(
+    `<center><b>IP Tracking</b></center><hr style="border-top: 3px solid #bbb;">Your IP : ${ip}`,
+  );
 }
 
-function btnGetdata(value){
+function btnGetdata(value) {
   searchInput.value = value;
   getData();
 }
 
 // Checking data from json
-const apiitems = ["ip", "postal", "latitude", "longitude", "utc_offset", "country_calling_code", "country_area", "country_population"];
+const apiitems = [
+  "ip",
+  "postal",
+  "latitude",
+  "longitude",
+  "utc_offset",
+  "country_calling_code",
+  "country_area",
+  "country_population",
+];
 function outputCheck(item) {
   for (let index = 0; index < apiitems.length; index++) {
     if (item === apiitems[index]) {
       return true;
     }
-  }  
+  }
 }
-
 </script>
 <template>
-  <!-- parent div -->
-  <div class="flex justify-center items-center h-screen w-screen bg-gradient-to-r from-cyan-500 to-blue-500">
-    <!-- centered div -->
-    <div class="olumns-2 w-full h-full bg-gray-200 rounded shadow-lg">
-        <!-- above div -->
-        <div class="h-1/2 w-full">
-            <div class="flex items-center w-full mx-auto">
-                <span class="inline-block align-middle text-4xl mx-auto text-gray-800 font-bold">IP Tracking</span>
-            </div>
-            <!-- Search input https://tailwindcomponents.com/component/search-bar -->
-            <div class="pt-2 relative mx-auto text-gray-600 w-4/5 h-3/5">
-                <input class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 w-full rounded-lg text-sm focus:outline-none" type="search" name="search" placeholder="Search any IP here" v-model="searchInput" @keyup.enter="getData()">
-                <button type="submit" class="absolute right-0 top-0 mt-5 mr-4" v-on:click="getData()">
-                    <img class="text-gray-600 h-4 w-4 fill-current" src="../assets/icon/search.svg" alt="" width="512px" height="512px">
-                </button>
-                <!-- OUTPUT -->
-                <div class="bg-neutral-700 w-full h-4/5 mt-3 rounded mx-auto my-auto overflow-auto" v-bind:class="{'animate-pulse' : loading, 'a' : !loading}">
-                    <div class="" v-if="loading === true">
-                        <ul>
-                            <li v-for="index in 15">
-                                <div class="rounded-full bg-neutral-600 h-5 w-auto mx-2 mt-2" ></div>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="" v-else>
-                        <ul class="ml-2">
-                            <li v-for="(data, index) in datas">
-                            <!-- If api return empty string -->
-                                <span v-if="data === ''">
-                                <div class="flex">
-                                    <p class="text-neutral-300">{{index}}: </p><p class="text-orange-400">&nbsp -</p>    
-                                </div>
-                                </span>
-                                <!-- Number -->
-                                <span v-else-if="outputCheck(index)">
-                                <div class="flex">
-                                    <p class="text-neutral-300">{{index}}: </p><p class="text-green-400">&nbsp {{data}}</p>
-                                </div>
-                                </span>
-                                <!-- Else -->
-                                <span v-else>
-                                <div class="flex">
-                                    <p class="text-neutral-300">{{index}}: </p><p class="text-orange-400">&nbsp {{data}}</p>
-                                </div>
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
+  <div class="min-h-screen w-full bg-slate-50 text-slate-900">
+    <header class="w-full border-b border-slate-200 bg-white">
+      <div class="px-5 py-4">
+        <h1 class="text-lg font-semibold tracking-tight">IP Tracking</h1>
+      </div>
+    </header>
+    <main class="px-5 py-4 space-y-4">
+      <section class="rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div class="p-4">
+          <div class="relative">
+            <input
+              class="w-full h-11 rounded-lg border border-slate-300 bg-white px-4 pr-12 text-sm placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              type="search"
+              name="search"
+              placeholder="Cari IP address"
+              v-model="searchInput"
+              @keyup.enter="getData()"
+            />
+            <button
+              type="submit"
+              class="absolute right-2 top-1.5 inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-300 bg-white text-slate-600 hover:bg-slate-50"
+              v-on:click="getData()"
+              aria-label="Search"
+            >
+              <img class="h-4 w-4" src="../assets/icon/search.svg" alt="" />
+            </button>
+          </div>
+          <div class="mt-4 flex gap-2">
+            <button
+              class="rounded-md border border-slate-300 bg-white px-3 py-2 text-xs text-slate-700 hover:bg-slate-50"
+              @click="btnGetdata('')"
+            >
+              My IP
+            </button>
+            <button
+              class="rounded-md border border-slate-300 bg-white px-3 py-2 text-xs text-slate-700 hover:bg-slate-50"
+              @click="btnGetdata('8.8.8.8')"
+            >
+              8.8.8.8
+            </button>
+            <button
+              class="rounded-md border border-slate-300 bg-white px-3 py-2 text-xs text-slate-700 hover:bg-slate-50"
+              @click="btnGetdata('2001:4860:4860::8888')"
+            >
+              2001:4860:4860::8888
+            </button>
+          </div>
+          <div class="mt-6">
+            <div
+              class="max-h-80 overflow-auto rounded-lg border border-slate-200"
+            >
+              <div v-bind:class="{ 'animate-pulse': loading }">
+                <div v-if="loading === true" class="p-4">
+                  <ul class="space-y-2">
+                    <li v-for="index in 12">
+                      <div class="h-5 w-full rounded bg-slate-200"></div>
+                    </li>
+                  </ul>
                 </div>
-                <div class="text-sm">
-                    <button class="h-10 px-3 text-gray-700 transition-colors duration-150 bg-gray-300 rounded-lg focus:shadow-outline hover:bg-gray-400 shadow-lg mt-3 text-xs" @click="btnGetdata('')">My IP</button>
-                    <button class="h-10 px-3 text-gray-700 transition-colors duration-150 bg-gray-300 rounded-lg focus:shadow-outline hover:bg-gray-400 shadow-lg mt-3 ml-3 text-xs"  @click="btnGetdata('8.8.8.8')">8.8.8.8</button>
-                    <button class="h-10 px-3 text-gray-700 transition-colors duration-150 bg-gray-300 rounded-lg focus:shadow-outline hover:bg-gray-400 shadow-lg mt-3 ml-3 text-xs"  @click="btnGetdata('2001:4860:4860::8888')">2001:4860:4860::8888</button>
+                <div v-else class="divide-y divide-slate-100">
+                  <ul>
+                    <li
+                      v-for="(data, index) in datas"
+                      class="flex items-center justify-between px-4 py-2"
+                    >
+                      <span class="text-sm text-slate-600">{{ index }}</span>
+                      <span v-if="data === ''" class="text-sm text-orange-500"
+                        >-</span
+                      >
+                      <span
+                        v-else-if="outputCheck(index)"
+                        class="text-sm font-medium text-emerald-600"
+                        >{{ data }}</span
+                      >
+                      <span v-else class="text-sm text-slate-800">{{
+                        data
+                      }}</span>
+                    </li>
+                  </ul>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
-        <!-- bottom -->
-        <div class="h-1/2 w-full">
-             <div id="map" class="w-full h-full"></div>
+      </section>
+      <section class="rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div class="p-3">
+          <div id="map" class="h-[380px] w-full rounded-lg"></div>
         </div>
-        <!-- end bottom -->
-    </div>
+      </section>
+    </main>
   </div>
 </template>
