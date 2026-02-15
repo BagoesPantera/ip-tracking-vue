@@ -1,38 +1,63 @@
-# IP Tracking - VUE
+# IP Tracking (Vue 3 + Vite)
 
-This is an IP Tracking project that developed in Vue 3 and Vite. Powered by [ipapi.co](https://ipapi.co/), [Leaflet](https://leafletjs.com/) and [OpenStreetMap](https://www.openstreetmap.org/).
+A minimal, modern IP tracking app built with Vue 3 and Vite. It uses public geolocation data from [ipapi.co](https://ipapi.co/), maps rendered by [Leaflet](https://leafletjs.com/) and tiles from [OpenStreetMap](https://www.openstreetmap.org/).
 
-## Recommended IDE Setup
+## Features
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.vscode-typescript-vue-plugin).
+- Search IP address (IPv4/IPv6) and view details
+- “My IP” quick action
+- Interactive map with marker and radius
+- Minimalist, responsive UI (desktop & mobile)
+- Rate-limit handling (shows a modal for HTTP 429)
 
-## Customize configuration
+## Tech Stack
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- Vue 3.5
+- Vue Router 5
+- Vite 7
+- Tailwind CSS 3
+- Leaflet
 
-## Project Setup
+## Requirements
+
+- Node.js 18+ and npm
+- Recommended: [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar) (disable Vetur)
+
+## Getting Started
+
+Install dependencies:
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+Start development server:
 
 ```sh
 npm run dev
 ```
 
-### Compile and Minify for Production
+Build for production:
 
 ```sh
 npm run build
 ```
 
-## Github Page
-https://bagoespantera.github.io/ip-tracking-vue/
+Preview production build locally:
+
+```sh
+npm run preview
+```
+
+## Configuration
+
+- Vite base is set to a subpath for GitHub Pages deployment. Adjust `base` in [vite.config.js](file:///Users/pantera/project/node/ip-tracking-vue/vite.config.js) if deploying under a different path.
+
+## Deployment
+
+GitHub Pages: https://bagoespantera.github.io/ip-tracking-vue/
 
 ## Screenshots
-HomeView
-![HomeView Screenshot](https://github.com/BagoesPantera/ip-tracking-vue/blob/main/screenshots/HomeView.png?raw=true)
-NotFoundPage
-![Not found page screenshot](https://github.com/BagoesPantera/ip-tracking-vue/blob/main/screenshots/NotFoundPage.png?raw=true)
+
+Home
+![Home Screenshot](https://github.com/BagoesPantera/ip-tracking-vue/blob/main/screenshots/HomeView.png?raw=true)
